@@ -1,11 +1,13 @@
 package com.faleite.trades.service;
 
+import com.faleite.trades.dto.StockTradeDTO;
 import com.faleite.trades.exceptions.ResourceNotFoundException;
 import com.faleite.trades.model.StockTrade;
 import com.faleite.trades.repository.StockTradeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StockTradeService {
@@ -16,17 +18,47 @@ public class StockTradeService {
         this.stockTradeRepository = stockTradeRepository;
     }
 
-    public StockTrade createNewStock(StockTrade stockTrade){
-        return stockTradeRepository.save(stockTrade);
+    public List<StockTradeDTO> getStocks(){
+        return stockTradeRepository.findAll()
+                .stream()
+                .map(StockTradeDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public List<StockTrade> getStock(){
-        return stockTradeRepository.findAll();
-    }
-
-    public StockTrade getStockById(Long id){
-        return stockTradeRepository.findById(id)
+    public StockTradeDTO getStockById(Long id){
+        StockTrade entity = stockTradeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock ID " +id+ " not found"));
+        return StockTradeDTO.fromEntity(entity);
+    }
+
+    public StockTradeDTO createNewStock(StockTradeDTO stockTradeDTO){
+        StockTrade entity = stockTradeDTO.toEntity();
+        StockTrade saved = stockTradeRepository.save(entity);
+        return StockTradeDTO.fromEntity(saved);
+    }
+
+    public List<StockTradeDTO> filterBy(String type, Long userId){
+        List<StockTrade> entity;
+
+        if (type != null && userId != null){
+            entity = stockTradeRepository.findByTypeAndUserId(type, userId);
+        } else if (type != null){
+            entity = stockTradeRepository.findByType(type);
+        } else if (userId != null){
+            entity = stockTradeRepository.findByUserId(userId);
+        } else {
+            entity = stockTradeRepository.findAll();
+        }
+        return entity.stream()
+                .map(StockTradeDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteStockTradeById(Long id){
+        if (!stockTradeRepository.existsById(id)){
+            throw new ResourceNotFoundException("Stock ID " +id+ " not found");
+        }
+        stockTradeRepository.deleteById(id);
     }
 
 }
