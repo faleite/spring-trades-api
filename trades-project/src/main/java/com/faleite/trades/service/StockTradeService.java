@@ -1,6 +1,7 @@
 package com.faleite.trades.service;
 
-import com.faleite.trades.dto.StockTradeDTO;
+import com.faleite.trades.dto.StockTradeRequestDTO;
+import com.faleite.trades.dto.StockTradeResponseDTO;
 import com.faleite.trades.exceptions.ResourceNotFoundException;
 import com.faleite.trades.model.StockTrade;
 import com.faleite.trades.repository.StockTradeRepository;
@@ -18,26 +19,30 @@ public class StockTradeService {
         this.stockTradeRepository = stockTradeRepository;
     }
 
-    public List<StockTradeDTO> getStocks(){
+    // Listar todos os trades → sempre devolve ResponseDTO
+    public List<StockTradeResponseDTO> getStocks(){
         return stockTradeRepository.findAll()
                 .stream()
-                .map(StockTradeDTO::fromEntity)
+                .map(StockTradeResponseDTO::fromEntity) // Entity → ResponseDTO
                 .collect(Collectors.toList());
     }
 
-    public StockTradeDTO getStockById(Long id){
+    // Buscar por ID → retorna ResponseDTO
+    public StockTradeResponseDTO getStockById(Long id){
         StockTrade entity = stockTradeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock ID " +id+ " not found"));
-        return StockTradeDTO.fromEntity(entity);
+        return StockTradeResponseDTO.fromEntity(entity);
     }
 
-    public StockTradeDTO createNewStock(StockTradeDTO stockTradeDTO){
-        StockTrade entity = stockTradeDTO.toEntity();
+    // Criar novo trade → recebe RequestDTO, salva entity, retorna ResponseDTO
+    public StockTradeResponseDTO createNewStock(StockTradeRequestDTO stockTradeRequestDTO){
+        StockTrade entity = stockTradeRequestDTO.toEntity();  // RequestDTO → Entity
         StockTrade saved = stockTradeRepository.save(entity);
-        return StockTradeDTO.fromEntity(saved);
+        return StockTradeResponseDTO.fromEntity(saved); // Entity → ResponseDTO
     }
 
-    public List<StockTradeDTO> filterBy(String type, Long userId){
+    // Filtro → sempre retorna ResponseDTO
+    public List<StockTradeResponseDTO> filterBy(String type, Long userId){
         List<StockTrade> entity;
 
         if (type != null && userId != null){
@@ -50,7 +55,7 @@ public class StockTradeService {
             entity = stockTradeRepository.findAll();
         }
         return entity.stream()
-                .map(StockTradeDTO::fromEntity)
+                .map(StockTradeResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 

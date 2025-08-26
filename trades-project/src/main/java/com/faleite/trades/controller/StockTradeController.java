@@ -1,6 +1,7 @@
 package com.faleite.trades.controller;
 
-import com.faleite.trades.dto.StockTradeDTO;
+import com.faleite.trades.dto.StockTradeRequestDTO;
+import com.faleite.trades.dto.StockTradeResponseDTO;
 import com.faleite.trades.service.StockTradeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +20,14 @@ public class StockTradeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StockTradeDTO>> getStocks(){
-        List<StockTradeDTO> trades = stockTradeService.getStocks();
+    public ResponseEntity<List<StockTradeResponseDTO>> getStocks(){
+        List<StockTradeResponseDTO> trades = stockTradeService.getStocks();
         return ResponseEntity.ok(trades);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getStockById(@PathVariable Long id){
-        StockTradeDTO trade = stockTradeService.getStockById(id);
+        StockTradeResponseDTO trade = stockTradeService.getStockById(id);
         return ResponseEntity.ok(trade);
     }
 
@@ -50,8 +51,8 @@ public class StockTradeController {
      return ResponseEntity.created(location).body(created);
      */
     @PostMapping
-    public ResponseEntity<StockTradeDTO> createNewStock(@RequestBody StockTradeDTO stockTradeDTO){
-        StockTradeDTO created = stockTradeService.createNewStock(stockTradeDTO);
+    public ResponseEntity<StockTradeResponseDTO> createNewStock(@RequestBody StockTradeRequestDTO stockTradeRequestDTO){
+        StockTradeResponseDTO created = stockTradeService.createNewStock(stockTradeRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
