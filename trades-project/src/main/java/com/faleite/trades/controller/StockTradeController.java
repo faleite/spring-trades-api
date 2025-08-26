@@ -41,6 +41,14 @@ public class StockTradeController {
         return ResponseEntity.ok(stockTradeService.getStocks());
     }
 
+    /* Outros tipos de return
+     // Se comporta igual mas é mais antigo
+     return new ResponseEntity<>(created, HttpStatus.CREATED);
+
+     // Outra forma
+     URI location = URI.create("/stocks/" + created.getId());
+     return ResponseEntity.created(location).body(created);
+     */
     @PostMapping
     public ResponseEntity<StockTradeDTO> createNewStock(@RequestBody StockTradeDTO stockTradeDTO){
         StockTradeDTO created = stockTradeService.createNewStock(stockTradeDTO);
