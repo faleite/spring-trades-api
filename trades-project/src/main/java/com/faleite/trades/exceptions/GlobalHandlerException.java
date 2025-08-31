@@ -25,7 +25,7 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> ResourceNotFound(Exception e){
+    public ResponseEntity<Object> ServerErrorException(Exception e){
         Map<String, Object> body = new LinkedHashMap<>();
 
         body.put("timestamp", LocalDateTime.now());
